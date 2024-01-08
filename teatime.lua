@@ -65,8 +65,8 @@ function cmp(tab1, tab2)
 end
 
 -- Сделать один ход (поменять сдвинуть предмет)
-function step(old, i1, j1, i2, j2)
-  local tab = copy(old)
+function step(tab, i1, j1, i2, j2)
+  local tab = copy(tab)
   tab[i2][j2] = tab[i1][j1]
   tab[i1][j1] = " "
   return tab
