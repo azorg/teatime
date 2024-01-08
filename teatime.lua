@@ -6,9 +6,9 @@ print "Решение задачки с перестановкой чайник�
 n, m = 3, 2
 
 -- Максимальное число ходов
-steps = 100
+maxSteps = 40
 
--- Минимальное число ходов решения
+-- Минимальное число ходов решения для выхода из программы
 minSteps = 17
 
 -- Исходное размещение предметов на столе
@@ -57,8 +57,8 @@ function cmp(tab1, tab2)
   for i = 1, #tab1 do -- 1..m
     for j = 1, #tab1[i] do -- 1...n
       if tab1[i][j] ~= tab2[i][j] then
-		return false -- различие найдено
-	  end
+        return false -- различие найдено
+      end
     end
   end
   return true -- состояния совпадают
@@ -145,12 +145,14 @@ level = {[0] = {node0}}
 -- Словарь с указанием узла для каждого состояний
 dict = {[tab0] = node0}
 
+-- Список найденных решений на дереве
+
 -- Построим дерево для всевозможных ходов
--- (функция возвращает узел дерева в состоянии решения)
-function run(steps)
-  for i = 1, steps do
-    print(i)
-    newLevel = {}
+-- (функция возвращает узлы дерева в состоянии решения)
+function run(minSteps, maxSteps)
+  for i = #level + 1, maxSteps do
+    local newLevel = {}
+    local result = {} -- список найденных решений (узлов)
     for _, node in pairs(level[i-1]) do
       local prev = tab
       if node.parent ~= nil then
@@ -162,22 +164,19 @@ function run(steps)
           newNode = new(tab, node)
           newLevel[#newLevel + 1] = newNode
           dict[tab] = newNode
-          if check(tab) then
-            print "Bingo!"
-            if i >= minSteps then
-              return newNode
-            end
+          if check(tab) then -- решение найдено
+            result[#result + 1] = newNode
           end
         end
       end
     end -- for node
-    if #newLevel == 0 then
-      print "Finish!"
-      return node
-    end
     level[i] = newLevel
+    print(i .. "-" .. #newLevel .. "->" .. #result)
+    if i >= minSteps then
+      return result
+    end
   end -- for i
-  return node0
+  return {}
 end
 
 -- Вывести последовательность ходов
@@ -195,9 +194,17 @@ function trace(node)
   end
 end
 
--- Выполнить поиск решения
-node = run(steps)
+-- Выполнить поиск решений
+result = run(minSteps, maxSteps)
 
--- Вывести решение
-print()
-trace(node)
+-- Число выводимых решений (ограниченр)
+resNum = 3
+if resNum > #result then
+  resNum = #result
+end
+
+-- Вывести найденные решения (с учётом ограничений)
+for i = 1, resNum do
+  print "-----"
+  trace(result[i])
+end
