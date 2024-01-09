@@ -216,7 +216,7 @@ end
 -- Выполнить поиск решений
 result = run(minSteps, maxSteps)
 
--- Число выводимых решений (ограниченр)
+-- Число выводимых решений (ограничено)
 resNum = 3
 if resNum > #result then
   resNum = #result
